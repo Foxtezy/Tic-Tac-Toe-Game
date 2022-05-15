@@ -1,4 +1,4 @@
-asect 0xf8
+asect 0xf8						# similarly as in the main bank
 br 0x00
 
 asect 0xf4
@@ -8,7 +8,7 @@ dc 0x00
 asect 0x00
 
 ldi r3, 2  
-jsr find2inRow		# перед вызовом загрузить в r3 противоположный символ от тех, для которых ищем 2 занятых и 1 пустоту
+jsr find2inRow					# before calling, it is necessary to load into r3 the opposite symbol from those for which we are looking for 2 occupied and 1 empty
 
 if 
 	tst r3
@@ -40,19 +40,19 @@ br 0xf8
 
 find2inRow:
 ldi r0, table
-ldi r2, 8					# кол-во выигрышных комбинаций
+ldi r2, 8						# number of winning combinations
 while 
 	tst r2
 stays gt
 	dec r2
-	save r2					# используем как доп регистр
+	save r2						# we use it as an additional register
 	clr r2
-	ldc r0, r1				# # загрузка адреса выигрышной комбинации, заменить на ldc
-	ld r1, r1				# загружаем данные из ячейки с адресом выигрышной позиции в r1 
+	ldc r0, r1
+	ld r1, r1					# loading data from the cell with the address of the winning position in r1 
 	inc r0
 	if 
 		cmp r3, r1
-	is ne					# проверка, что в  1  ячейке НЕ крестик
+	is ne						# checking that there is NO cross in 1 cell
 		if 
 			tst r1
 		is eq
@@ -63,17 +63,17 @@ stays gt
 		inc r0
 		if
 			cmp r3, r1
-		is ne				# проверка, что во  2  ячейке НЕ крестик
+		is ne					# checking that there is NO cross in the 2nd cell
 			if
 				tst r1	
-			is eq			# если во второй ячейке ряда лежит пустота
+			is eq				# if there is a void in the second cell of the row
 				inc r2
 			fi
 			ldc r0, r1
 			ld r1, r1
 			inc r0
 			if 
-				cmp r3, r1	# проверка, что в  3  ячейке НЕ крестик
+				cmp r3, r1		# checking that there is NO cross in cell 3
 			is ne
 				if 
 					tst r1
@@ -83,19 +83,19 @@ stays gt
 				ldi r1, 1
 				if 
 					cmp r2, r1
-				is eq	###################################
+				is eq
 					jsr put0
 					pop r3
-					ldi r3, -1		# флажок захода в put0
+					ldi r3, -1	# flag for entering put0
 					rts
-				fi      #################################
+				fi
 			fi
 		else
 			inc r0
 		fi
 	else
-	inc r0					# сдвиги адреса в table
-	inc r0					#
+	inc r0						# address shifts in table
+	inc r0						#
 	fi
 	restore
 wend
@@ -118,8 +118,8 @@ stays ne
 	inc r2
 wend
 save r2
-ldc r0, r1				# в r0 лежит адрес из table
-ldi r2, 1				# в r1 лежит индекс
+ldc r0, r1						# r0 contains the address from table
+ldi r2, 1						# in r1 is the index
 st r1, r2
 restore
 rts
@@ -134,7 +134,7 @@ if
 is eq
 	ldi r1, 1
 	st r0, r1
-	ldi r3, -1		# flag
+	ldi r3, -1					# flag
 fi
 move r0, r1
 rts
@@ -166,16 +166,16 @@ rts
 
 
 output:
-move r1, r3			# в r1 индекс массива
+move r1, r3						# in r1 is the index of the array
 shla r3
 shla r3
-or r2, r3			# в r1 
+or r2, r3
 ldi r2, 0xe3
 st r2, r3
 rts
 
 
-rowIllumination:	# подсветка ряда
+rowIllumination:				# row illumination
 while 
 	tst r2
 stays gt
@@ -188,13 +188,13 @@ while
 tst r1 
 stays gt 
 clr r3
-ldc r2, r3			# загружаем нужный индекс
+ldc r2, r3						# loading the desired index
 shla r3
 shla r3
 ldi r0, 0b01000011
 or r3, r0
 ldi r3, 0xe3		
-st r3, r0			# отдаем в оутпут
+st r3, r0						# we give it to the output
 inc r2
 dec r1
 wend
